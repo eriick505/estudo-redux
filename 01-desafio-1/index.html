@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <script src="/immer.umd.production.min.js"></script>
+    <script src="/redux.min.js"></script>
+  </head>
+
+  <body>
+    <ul id="list">
+      <li>asoiasd</li>
+    </ul>
+
+    <script type="module">
+      // Usando o Redux (pode usar Immer ou Não).
+      // Crie uma store contendo os estados iniciais abaixo
+      // Crie as seguintes ações:
+      // aluno/INCREMENTAR_TEMPO, adiciona 1 dia de acesso
+      // aluno/REDUZIR_TEMPO, reduz 1 dia de acesso
+      // aluno/MODIFICAR_EMAIL(email), modifica o email do usuário
+      // aulas/COMPLETAR_AULA(id), completa a aula com base no ID passado
+      // aulas/COMPLETAR_CURSO, completa todas as aulas
+      // aulas/RESETAR_CURSO, reseta todas as aulas completas
+      // Crie constantes e action creators para as ações.
+      // Crie um reducer para aluno e um para aulas.
+      // Renderize na tela o nome, email, tempo restante e o total de aulas completas
+      // Configure a DevTools
+
+      import store from "./store/configureStore.js";
+      import {
+        incrementar_tempo,
+        reduzir_tempo,
+        modificar_email,
+      } from "./store/aluno.js";
+
+      import {
+        completar_aula,
+        completar_curso,
+        resetar_curso,
+      } from "./store/aulas.js";
+
+      function render() {
+        const { aluno, aulas } = store.getState();
+        console.log(aulas);
+
+        const totalAulasConcluida = aulas.filter(
+          (aula) => aula.completa
+        ).length;
+
+        const list = document.querySelector("#list");
+
+        list.innerHTML = `
+          <li><b>nome:</b> ${aluno.nome}</li>
+          <li><b>email:</b> ${aluno.email}</li>
+          <li><b>dias restantes:</b> ${aluno.diasRestantes}</li>
+          <li><b>aulas concluidas:</b> ${totalAulasConcluida}</li>
+        `;
+      }
+
+      store.subscribe(render);
+
+      store.dispatch(resetar_curso());
+      store.dispatch(completar_aula(2));
+
+      store.dispatch(incrementar_tempo());
+      store.dispatch(reduzir_tempo());
+      store.dispatch(modificar_email("ericktrx1@hotm4ail.com"));
+
+      store.dispatch(completar_curso());
+    </script>
+  </body>
+</html>
