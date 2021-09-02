@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <script src="/immer.umd.production.min.js"></script>
+    <script src="/redux.min.js"></script>
+  </head>
+
+  <body>
+    <script>
+      const obj1 = {
+        name: "André",
+        idade: 31,
+      };
+
+      const obj2 = immer.produce(obj1, (draft) => {
+        draft.idade = 35;
+      });
+
+      console.log(obj2);
+
+      // IMUTABILIDADE COM REDUX + IMMER
+      const initialState = {
+        name: "André",
+        idade: 31,
+        sobre: {
+          dados: {
+            cidade: "recife",
+          },
+        },
+      };
+
+      // MODIFICAÇÃO DO ESTADO COM IMMER
+      const reducer = immer.produce((state, action) => {
+        switch (action.type) {
+          case "MUDAR_NOME":
+            state.name = action.payload;
+            break;
+          case "MUDAR_IDADE":
+            state.idade = action.payload;
+            break;
+        }
+      }, initialState);
+
+      // MODIFICAÇÃO DE ESTADO SEM A UTILIZAÇÃO DO IMMMER
+      // const reducer = (state = initialState, action) => {
+      //   switch (action.type) {
+      //     case "MUDAR_NOME":
+      //       return { ...state, name: action.payload };
+      //     case "MUDAR_IDADE":
+      //       return { ...state, idade: action.payload };
+      //     case "MUDAR_CIDADE":
+      //       return {
+      //         ...state,
+      //         sobre: {
+      //           ...state.sobre,
+      //           dados: { ...state.sobre.dados, cidade: action.payload },
+      //         },
+      //       };
+      //     default:
+      //       return state;
+      //   }
+      // };
+
+      const store = Redux.createStore(
+        reducer,
+        window.__REDUX_DEVTOOLS_EXTENSION__ &&
+          window.__REDUX_DEVTOOLS_EXTENSION__()
+      );
+
+      store.dispatch({ type: "MUDAR_NOME", payload: "Maria" });
+      store.dispatch({ type: "MUDAR_NOME", payload: "joao" });
+      store.dispatch({ type: "MUDAR_IDADE", payload: 35 });
+      store.dispatch({ type: "MUDAR_NOME", payload: "pedro" });
+      store.dispatch({ type: "MUDAR_CIDADE", payload: "olinda" });
+    </script>
+  </body>
+</html>
