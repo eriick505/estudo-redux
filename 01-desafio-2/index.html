@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <script src="/immer.umd.production.min.js"></script>
+    <script src="/redux.min.js"></script>
+  </head>
+
+  <body>
+    <script type="module">
+      // Organize o código em diferentes arquivos com type module
+      // Crie 2 reducers, token e user
+      // Ações:
+      // token/FETCH_STARTED, token/FETCH_SUCCESS, token/FETCH_ERROR
+      // user/FETCH_STARTED, user/FETCH_SUCCESS, user/FETCH_ERROR
+      // Crie constantes e action creators para cada ação
+      // Crie middlewares: Thunk e localStorage
+      // Com a api do curso de React, puxe o token:
+      // o user pode ser { username: 'dog', password: 'dog' }
+
+      // A api deve ir dentro da action creator das funções assíncronas
+      // Verifique se o token existe, caso exista dispare imediatamente
+      // a função para puxar o usuário. Se não existir, dispare a
+      // função para puxar o token e em seguida para puxar o usuário
+
+      import store from "./store/configureStore.js";
+      import {
+        fetchTokenStarted,
+        fetchTokenSuccess,
+        fetchTokenError,
+        LOCAL_STORAGE_TOKEN,
+      } from "./store/token.js";
+
+      import {
+        fetchUserStarted,
+        fetchUserSuccess,
+        fetchUserError,
+      } from "./store/user.js";
+
+      const POST_TOKEN_URL =
+        "https://dogsapi.origamid.dev/json/jwt-auth/v1/token";
+
+      const GET_USER_URL = "https://dogsapi.origamid.dev/json/api/user";
+
+      const user = { username: "dog", password: "dog" };
+
+      function fetchToken(url, user) {
+        return async (dispatch) => {
+          try {
+            dispatch(fetchTokenStarted());
+
+            const options = {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(user),
+            };
+
+            const response = await fetch(url, options);
+
+            if (!response.ok) throw new Error("Erro ao buscar o token");
+
+            const { token } = await response.json();
+            dispatch(fetchTokenSuccess(token, LOCAL_STORAGE_TOKEN));
+          } catch (err) {
+            dispatch(fetchTokenError(err.message));
+          }
+        };
+      }
+
+      function fetchUser(url, token) {
+        return async (dispatch) => {
+          try {
+            dispatch(fetchUserStarted());
+
+            const options = {
+              method: "GET",
+              headers: {
+                Authorization: "Bearer " + token,
+              },
+            };
+
+            const response = await fetch(url, options);
+
+            if (!response.ok) throw new Error("Erro ao buscar o usuario");
+
+            const data = await response.json();
+            dispatch(fetchUserSuccess(data));
+          } catch (err) {
+            dispatch(fetchUserError(err.message));
+          }
+        };
+      }
+
+      async function login() {
+        let state = store.getState();
+
+        if (state.token.data === null) {
+          await store.dispatch(fetchToken(POST_TOKEN_URL, user));
+        }
+
+        state = store.getState();
+        await store.dispatch(fetchUser(GET_USER_URL, state.token.data));
+      }
+
+      login();
+    </script>
+  </body>
+</html>
