@@ -5,7 +5,7 @@ import { createSlice } from "@reduxjs/toolkit";
  * @param {Object} config
  * @param {String} config.name
  * @param {Object} config.initialState
- * @param {String} config.reducers
+ * @param {Object} config.reducers
  * @param {Function} config.fetchConfig
  * @returns
  */
