@@ -1,0 +1,22 @@
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin: 2rem;
+}
+
+.container {
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.anime {
+  opacity: 0;
+  transform: translateX(-10px);
+  animation: animeLeft 0.3s forwards;
+}
+
+@keyframes animeLeft {
+  to {
+    transform: initial;
+    opacity: 1;
+  }
+}
