@@ -58,7 +58,7 @@ const user = createAsyncSlice({
     options: {
       method: "GET",
       headers: {
-        Authorization: "Bearer" + token,
+        Authorization: "Bearer " + token,
       },
     },
   }),
