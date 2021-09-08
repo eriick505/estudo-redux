@@ -9,11 +9,17 @@ function Header() {
 
   const dispatch = useDispatch();
 
+  function logout() {
+    if (user.data) {
+      dispatch(userLogout());
+    }
+  }
+
   return (
     <header className={styles.header}>
       <h1 className={styles.title}>Mini Dogs</h1>
       <button
-        onClick={() => dispatch(userLogout())}
+        onClick={logout}
         className={`
         ${styles.login} 
         ${loading ? styles.loading : ""}
